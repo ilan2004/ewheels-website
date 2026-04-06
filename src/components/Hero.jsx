@@ -26,10 +26,6 @@ export default function Hero() {
             efficient, and built around your schedule.
           </p>
           <div className="hero__actions">
-            <a href="#cta" className="btn-primary" id="hero-book-btn">
-              Book Service
-              <ArrowIcon />
-            </a>
             <a href="#services" className="btn-outline" id="hero-services-btn">
               What We Do
             </a>

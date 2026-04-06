@@ -4,7 +4,6 @@ import Hero from '../components/Hero'
 import Services from '../components/Services'
 import Process from '../components/Process'
 import Trust from '../components/Trust'
-import CTASection from '../components/CTASection'
 import Footer from '../components/Footer'
 
 export default function Home() {
@@ -19,8 +18,6 @@ export default function Home() {
         <Process />
         <div className="divider" />
         <Trust />
-        <div className="divider" />
-        <CTASection />
       </main>
       <Footer />
     </>

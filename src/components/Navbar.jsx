@@ -26,8 +26,6 @@ export default function Navbar() {
           <a href="#trust">About</a>
         </nav>
 
-        {/* CTA */}
-        <a href="#cta" className="btn-primary navbar__cta">Book Service</a>
 
         {/* Mobile burger */}
         <button
@@ -45,7 +43,6 @@ export default function Navbar() {
         <a href="#services" onClick={() => setMenuOpen(false)}>Services</a>
         <a href="#process" onClick={() => setMenuOpen(false)}>How It Works</a>
         <a href="#trust" onClick={() => setMenuOpen(false)}>About</a>
-        <a href="#cta" className="btn-primary" onClick={() => setMenuOpen(false)}>Book Service</a>
       </div>
     </header>
   )

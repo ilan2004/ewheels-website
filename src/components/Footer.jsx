@@ -5,7 +5,6 @@ const NAV_LINKS = [
   { label: 'Services',    href: '#services' },
   { label: 'How It Works', href: '#process' },
   { label: 'About',       href: '#trust' },
-  { label: 'Book Service', href: '#cta' },
 ]
 
 const LEGAL_LINKS = [

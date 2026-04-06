@@ -65,12 +65,7 @@ export default function Services() {
               {s.tag && <span className="service-card__tag">{s.tag}</span>}
               <h3>{s.title}</h3>
               <p>{s.desc}</p>
-              <a href="#cta" className="service-card__link">
-                Learn more
-                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-                  <path d="M2 6h8M6.5 2.5L10 6l-3.5 3.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </a>
+
             </div>
           ))}
         </div>
