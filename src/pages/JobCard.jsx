@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { Loader2, AlertCircle } from 'lucide-react'
 import Timeline from '../components/JobCard/Timeline'
@@ -170,9 +170,12 @@ export default function JobCard() {
           <CardHeader>
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-                  <span className="text-xs font-semibold text-primary uppercase tracking-widest">E-Wheels Service</span>
+                <div className="flex items-center gap-3 mb-3">
+                  <Link to="/" className="hover:opacity-80 transition-opacity">
+                    <img src="/splash.png" alt="Ewheels Logo" className="navbar__logo-img" style={{ height: '28px' }} />
+                  </Link>
+                  <div className="h-4 w-[1px] bg-border/60 mx-1" />
+                  <span className="text-[10px] font-bold text-primary uppercase tracking-[0.15em]">Service Status</span>
                 </div>
                 <CardTitle className="text-2xl">Job Card {ticket.ticket_number}</CardTitle>
                 <CardDescription>
