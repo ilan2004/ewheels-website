@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import { Loader2, AlertCircle, Wrench, PackageCheck, Truck, Ban } from 'lucide-react'
+import { Loader2, AlertCircle } from 'lucide-react'
 import Timeline from '../components/JobCard/Timeline'
 import ServiceDetails from '../components/JobCard/ServiceDetails'
-import { motion } from 'framer-motion'
-import { Card, CardHeader, CardContent } from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
+import StepperProgress from '../components/JobCard/StepperProgress'
+import { Card, CardHeader, CardContent, CardTitle, CardDescription } from "@/components/ui/card"
 
 const getComplaintsArray = (complaintData) => {
   if (!complaintData) return [];
@@ -88,28 +87,10 @@ export default function JobCard() {
     }
   }, [ticket_number])
 
-  const getStatusIcon = (status) => {
-    switch (status?.toLowerCase()) {
-      case 'in_progress':
-      case 'triaged':
-        return <Wrench className="w-8 h-8 text-blue-500" />
-      case 'completed':
-        return <PackageCheck className="w-8 h-8 text-green-500" />
-      case 'delivered':
-        return <Truck className="w-8 h-8 text-purple-500" />
-      case 'cancelled':
-      case 'closed':
-        return <Ban className="w-8 h-8 text-gray-500" />
-      default:
-        return <AlertCircle className="w-8 h-8 text-yellow-500" />
-    }
-  }
-
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-8 text-foreground bg-background">
-        <Loader2 className="w-12 h-12 animate-spin text-primary mb-4" />
-        <p className="text-muted-foreground font-medium animate-pulse">Locating your job card...</p>
+      <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-background">
+        <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
       </div>
     )
   }
@@ -117,11 +98,11 @@ export default function JobCard() {
   if (error) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-background">
-        <Card className="max-w-md w-full border-destructive/20 bg-destructive/10">
+        <Card className="max-w-md w-full border-destructive/50">
           <CardContent className="pt-6 flex flex-col items-center text-center">
-            <AlertCircle className="w-16 h-16 text-destructive mb-4" />
-            <h2 className="text-2xl font-bold mb-2">Oops!</h2>
-            <p className="text-muted-foreground">{error}</p>
+            <AlertCircle className="w-10 h-10 text-destructive mb-4" />
+            <h2 className="font-semibold mb-2">Error</h2>
+            <p className="text-sm text-muted-foreground">{error}</p>
           </CardContent>
         </Card>
       </div>
@@ -131,65 +112,57 @@ export default function JobCard() {
   const { ticket, vehicle, battery, charger, updates } = data
 
   return (
-    <div className="min-h-screen bg-background text-foreground py-10 px-4 flex justify-center">
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-5xl flex flex-col gap-8"
-      >
-        <Card className="overflow-hidden border border-border/50 bg-card/50 backdrop-blur-md">
-          <div className="p-8">
-            <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-8">
+    <div className="min-h-screen bg-background text-foreground py-10 px-4 md:px-8 flex justify-center">
+      <div className="w-full max-w-5xl flex flex-col gap-6">
+        
+        {/* Header & Status Card */}
+        <Card>
+          <CardHeader>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <h1 className="text-3xl font-extrabold tracking-tight">Job Card #{ticket.ticket_number}</h1>
-                <p className="text-muted-foreground mt-1">Created on {new Date(ticket.created_at).toLocaleDateString()}</p>
+                <CardTitle className="text-2xl">Job Card {ticket.ticket_number}</CardTitle>
+                <CardDescription>
+                  Created on {new Date(ticket.created_at).toLocaleDateString()}
+                </CardDescription>
               </div>
-              <div className="bg-gradient-to-tr from-blue-600 to-violet-600 text-white px-4 py-1.5 rounded-full font-bold text-xs tracking-widest uppercase shadow-lg shadow-blue-500/20">
-                E-Wheels
-              </div>
-            </div>
-
-            <div className="flex flex-col sm:flex-row items-center gap-6 bg-muted/30 p-6 rounded-2xl border border-border/50">
-              <div className="bg-background p-4 rounded-xl shadow-inner border border-border/50">
-                {getStatusIcon(ticket.status)}
-              </div>
-              <div className="text-center sm:text-left">
-                <p className="text-xs text-muted-foreground uppercase tracking-widest font-bold mb-1">Current Status</p>
-                <h2 className="text-4xl font-black capitalize bg-gradient-to-r from-blue-400 to-violet-400 bg-clip-text text-transparent">
-                  {ticket.status?.replace('_', ' ')}
-                </h2>
-                {ticket.due_date && (
-                  <p className="mt-2 text-sm text-emerald-400 font-medium">
-                    Estimated Completion: {new Date(ticket.due_date).toLocaleDateString()}
-                  </p>
-                )}
+              <div className="px-3 py-1 bg-primary/10 text-primary text-sm font-medium rounded-full">
+                {ticket.status?.replace('_', ' ').toUpperCase()}
               </div>
             </div>
-          </div>
+          </CardHeader>
+          <CardContent>
+            <StepperProgress currentStatus={ticket.status} />
+            {ticket.due_date && (
+              <p className="text-sm text-muted-foreground mt-4 text-center sm:text-left">
+                Estimated Completion: {new Date(ticket.due_date).toLocaleDateString()}
+              </p>
+            )}
+          </CardContent>
         </Card>
 
-        <Card className="border border-border/50 bg-card/50 backdrop-blur-sm">
+        {/* Customer Information Card */}
+        <Card>
           <CardContent className="pt-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-2">Customer</p>
-                <p className="text-xl font-medium">{ticket.customers?.name || 'Unknown'}</p>
+                <p className="text-sm font-medium text-muted-foreground mb-1">Customer</p>
+                <p className="text-base">{ticket.customers?.name || 'Unknown'}</p>
               </div>
               <div>
-                <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-2">Contact</p>
-                <p className="text-xl font-medium">{ticket.customers?.phone || 'N/A'}</p>
+                <p className="text-sm font-medium text-muted-foreground mb-1">Contact</p>
+                <p className="text-base font-mono">{ticket.customers?.phone || 'N/A'}</p>
               </div>
-              <div className="col-span-1 sm:col-span-2">
-                <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">Reported Issues</p>
+              <div className="col-span-1 md:col-span-2">
+                <p className="text-sm font-medium text-muted-foreground mb-2">Reported Issues</p>
                 <div className="flex flex-wrap gap-2">
                   {getComplaintsArray(ticket.customer_complaint).length > 0 ? (
                     getComplaintsArray(ticket.customer_complaint).map((complaint, i) => (
-                      <span key={i} className="bg-secondary text-secondary-foreground px-4 py-1.5 rounded-full text-sm font-medium border border-border">
+                      <div key={i} className="bg-secondary text-secondary-foreground px-3 py-1 rounded-md text-sm">
                         {complaint}
-                      </span>
+                      </div>
                     ))
                   ) : (
-                    <span className="text-muted-foreground italic text-sm">No specific issues reported</span>
+                    <span className="text-muted-foreground text-sm">No specific issues reported</span>
                   )}
                 </div>
               </div>
@@ -197,7 +170,8 @@ export default function JobCard() {
           </CardContent>
         </Card>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Details and Timeline */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
             <ServiceDetails vehicle={vehicle} battery={battery} charger={charger} />
           </div>
@@ -206,7 +180,7 @@ export default function JobCard() {
           </div>
         </div>
 
-      </motion.div>
+      </div>
     </div>
   )
 }
