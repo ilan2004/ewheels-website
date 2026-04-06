@@ -40,11 +40,15 @@ export default function PhotoGallery({ photos }) {
                   className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                   loading="lazy"
                   onError={(e) => {
-                    e.target.style.display = 'none'
-                    e.target.nextSibling.style.display = 'flex'
+                    if (photo.fallbackUrl && e.target.src !== photo.fallbackUrl) {
+                      e.target.src = photo.fallbackUrl
+                    } else {
+                      e.target.style.display = 'none'
+                      e.target.nextSibling.style.display = 'flex'
+                    }
                   }}
                 />
-                <div className="hidden w-full h-full flex-col items-center justify-center gap-1 text-muted-foreground">
+                <div className="hidden w-full h-full flex-col items-center justify-center gap-1 text-muted-foreground p-2 text-center">
                   <ImageIcon className="w-6 h-6" />
                   <span className="text-xs">No preview</span>
                 </div>
@@ -88,11 +92,16 @@ export default function PhotoGallery({ photos }) {
             </button>
           )}
 
-          {/* Image */}
           <img
             src={photos[lightboxIndex].url}
             alt={photos[lightboxIndex].original_name || `Photo ${lightboxIndex + 1}`}
             className="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl"
+            onError={(e) => {
+              const currentPhoto = photos[lightboxIndex]
+              if (currentPhoto.fallbackUrl && e.target.src !== currentPhoto.fallbackUrl) {
+                e.target.src = currentPhoto.fallbackUrl
+              }
+            }}
             onClick={(e) => e.stopPropagation()}
           />
 
