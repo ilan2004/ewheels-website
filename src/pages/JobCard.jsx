@@ -70,30 +70,50 @@ export default function JobCard() {
           supabase.from('ticket_attachments').select('*').eq('ticket_id', ticket.id).eq('attachment_type', 'photo')
         ])
 
-        // Resolve image URLs
-        const photos = await Promise.all(
-          (attachmentsData || []).map(async (attachment) => {
-            try {
-              // Ensure the storage path doesn't incorrectly duplicate the bucket name
-              const cleanPath = attachment.storage_path.replace(/^media-photos\//, '')
-
-              // Get standard public URL
-              const { data: pubData } = supabase.storage
-                .from('media-photos')
-                .getPublicUrl(cleanPath)
-              
-              // Only request a signed URL if we absolutely need to, to avoid 400 Bad Request console noise
-              // For public buckets, we can just use the publicUrl
-              return {
-                ...attachment,
-                url: pubData.publicUrl,
-                fallbackUrl: pubData.publicUrl
+        // Resolve image URLs using secure backend API
+        const attachmentsArr = attachmentsData || []
+        const cleanPaths = attachmentsArr.map(a => a.storage_path.replace(/^media-photos\//, ''))
+        
+        let signedUrlMap = {}
+        if (cleanPaths.length > 0) {
+          try {
+            const apiRes = await fetch('/api/get-signed-urls', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ paths: cleanPaths })
+            })
+            
+            if (apiRes.ok) {
+              const { signedUrls } = await apiRes.json()
+              if (signedUrls && Array.isArray(signedUrls)) {
+                signedUrls.forEach(item => {
+                  if (item.signedUrl) {
+                    signedUrlMap[item.path] = item.signedUrl
+                  }
+                })
               }
-            } catch {
-              return null
+            } else {
+              console.error('API failed to generate signed URLs:', await apiRes.text())
             }
-          })
-        )
+          } catch (e) {
+            console.error('Failed to communicate with Vercel API:', e)
+          }
+        }
+
+        const photos = attachmentsArr.map((attachment) => {
+          const cleanPath = attachment.storage_path.replace(/^media-photos\//, '')
+          
+          // Get standard public URL natively just as a fallback
+          const { data: pubData } = supabase.storage
+            .from('media-photos')
+            .getPublicUrl(cleanPath)
+          
+          return {
+            ...attachment,
+            url: signedUrlMap[cleanPath] || pubData.publicUrl,
+            fallbackUrl: pubData.publicUrl
+          }
+        }).filter(Boolean)
 
         setData({
           ticket,
