@@ -112,29 +112,33 @@ export default function JobCard() {
   const { ticket, vehicle, battery, charger, updates } = data
 
   return (
-    <div className="min-h-screen bg-background text-foreground py-10 px-4 md:px-8 flex justify-center">
+    <div className="min-h-screen bg-gradient-to-b from-emerald-50 via-white to-white text-foreground py-10 px-4 md:px-8 flex justify-center">
       <div className="w-full max-w-5xl flex flex-col gap-6">
         
         {/* Header & Status Card */}
-        <Card>
+        <Card className="shadow-sm border-border/70">
           <CardHeader>
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                  <span className="text-xs font-semibold text-primary uppercase tracking-widest">E-Wheels Service</span>
+                </div>
                 <CardTitle className="text-2xl">Job Card {ticket.ticket_number}</CardTitle>
                 <CardDescription>
                   Created on {new Date(ticket.created_at).toLocaleDateString()}
                 </CardDescription>
               </div>
-              <div className="px-3 py-1 bg-primary/10 text-primary text-sm font-medium rounded-full">
-                {ticket.status?.replace('_', ' ').toUpperCase()}
+              <div className="px-3 py-1.5 bg-primary text-primary-foreground text-xs font-bold rounded-full tracking-wider uppercase">
+                {ticket.status?.replace(/_/g, ' ')}
               </div>
             </div>
           </CardHeader>
           <CardContent>
             <StepperProgress currentStatus={ticket.status} />
             {ticket.due_date && (
-              <p className="text-sm text-muted-foreground mt-4 text-center sm:text-left">
-                Estimated Completion: {new Date(ticket.due_date).toLocaleDateString()}
+              <p className="text-sm text-muted-foreground mt-2">
+                Estimated completion: <span className="font-medium text-foreground">{new Date(ticket.due_date).toLocaleDateString()}</span>
               </p>
             )}
           </CardContent>
