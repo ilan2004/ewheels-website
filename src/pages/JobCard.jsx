@@ -70,24 +70,23 @@ export default function JobCard() {
           supabase.from('ticket_attachments').select('*').eq('ticket_id', ticket.id).eq('attachment_type', 'photo')
         ])
 
-        // Resolve image URLs — bypass frontend CORS fetch limitations
+        // Resolve image URLs
         const photos = await Promise.all(
           (attachmentsData || []).map(async (attachment) => {
             try {
+              // Ensure the storage path doesn't incorrectly duplicate the bucket name
+              const cleanPath = attachment.storage_path.replace(/^media-photos\//, '')
+
               // Get standard public URL
               const { data: pubData } = supabase.storage
                 .from('media-photos')
-                .getPublicUrl(attachment.storage_path)
+                .getPublicUrl(cleanPath)
               
-              // Also request a signed URL just in case the bucket is private
-              const { data: signedData, error: signedError } = await supabase.storage
-                .from('media-photos')
-                .createSignedUrl(attachment.storage_path, 3600)
-
+              // Only request a signed URL if we absolutely need to, to avoid 400 Bad Request console noise
+              // For public buckets, we can just use the publicUrl
               return {
                 ...attachment,
-                // give preference to signed URL if it worked, otherwise public URL
-                url: (!signedError && signedData?.signedUrl) ? signedData.signedUrl : pubData.publicUrl,
+                url: pubData.publicUrl,
                 fallbackUrl: pubData.publicUrl
               }
             } catch {
