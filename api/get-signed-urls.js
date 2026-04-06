@@ -25,27 +25,33 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Paths array is required' })
   }
 
-  const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL
-  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+  const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL
+  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_SERVICE_ROLE_KEY
 
   if (!supabaseUrl || !supabaseServiceKey) {
-    console.error('Missing Supabase Service Key or URL inside Vercel Environment!')
-    return res.status(500).json({ error: 'Server configuration missing' })
+    return res.status(500).json({ 
+      error: 'CRITICAL: Server configuration missing variables', 
+      debug: { 
+        hasUrl: !!supabaseUrl, 
+        hasKey: !!supabaseServiceKey,
+        methods: req.method
+      } 
+    })
   }
 
   const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey)
 
   try {
-    // Generate signed URLs bypassing RLS using the admin service key
     const { data, error } = await supabaseAdmin.storage
       .from('media-photos')
-      .createSignedUrls(paths, 3600) // 1 hour expiry
+      .createSignedUrls(paths, 3600)
 
-    if (error) throw error
+    if (error) {
+      return res.status(500).json({ error: 'Supabase API Error', message: error.message })
+    }
 
     return res.status(200).json({ signedUrls: data })
   } catch (error) {
-    console.error('Error generating signed URLs:', error)
-    return res.status(500).json({ error: 'Failed to generate signed URLs' })
+    return res.status(500).json({ error: 'Catch Block Error', message: error.toString() })
   }
 }
