@@ -7,6 +7,23 @@ import ServiceDetails from '../components/JobCard/ServiceDetails'
 import { motion } from 'framer-motion'
 import './JobCard.css'
 
+const getComplaintsArray = (complaintData) => {
+  if (!complaintData) return [];
+  if (Array.isArray(complaintData)) return complaintData;
+  if (typeof complaintData === 'string') {
+    try {
+      if (complaintData.startsWith('[')) {
+        const parsed = JSON.parse(complaintData);
+        return Array.isArray(parsed) ? parsed : [complaintData];
+      }
+    } catch {
+      return [complaintData];
+    }
+    return [complaintData];
+  }
+  return [];
+};
+
 export default function JobCard() {
   const { ticket_number } = useParams()
   const [loading, setLoading] = useState(true)
@@ -163,9 +180,13 @@ export default function JobCard() {
             <div className="col-span-full">
               <p className="label">Reported Issues</p>
               <ul className="issue-list">
-                {ticket.customer_complaint?.map((complaint, i) => (
-                  <li key={i}>{complaint}</li>
-                )) || <li>No specific issues reported</li>}
+                {getComplaintsArray(ticket.customer_complaint).length > 0 ? (
+                  getComplaintsArray(ticket.customer_complaint).map((complaint, i) => (
+                    <li key={i}>{complaint}</li>
+                  ))
+                ) : (
+                  <li>No specific issues reported</li>
+                )}
               </ul>
             </div>
           </div>
