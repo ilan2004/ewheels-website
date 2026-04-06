@@ -1,0 +1,124 @@
+/* ─── Design Tokens ─────────────────────────────── */
+:root {
+  --bg:          #F7F7F5;
+  --surface:     #FFFFFF;
+  --border:      #E4E4DF;
+
+  --text-primary:   #222220;
+  --text-secondary: #6B6B67;
+  --text-muted:     #A8A8A3;
+
+  --green:       #6A9E77;
+  --green-light: #EDF4F0;
+  --green-dark:  #4D7A5A;
+  --lime:        #C9D96B;
+
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  --ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --transition: 0.3s var(--ease);
+}
+
+/* ─── Reset ─────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text-primary);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+a { text-decoration: none; color: inherit; }
+ul { list-style: none; }
+img, svg { display: block; }
+button { font-family: var(--font); cursor: pointer; border: none; background: none; }
+
+/* ─── Typography ─────────────────────────────────── */
+h1 { font-size: clamp(2.4rem, 5vw, 4rem); font-weight: 500; line-height: 1.15; letter-spacing: -0.03em; }
+h2 { font-size: clamp(1.6rem, 3vw, 2.4rem); font-weight: 500; line-height: 1.25; letter-spacing: -0.02em; }
+h3 { font-size: 1.05rem; font-weight: 500; line-height: 1.35; letter-spacing: -0.01em; }
+p  { font-size: 0.95rem; line-height: 1.75; color: var(--text-secondary); }
+
+/* ─── Layout Utilities ───────────────────────────── */
+.container {
+  width: 100%;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+section { padding: 7rem 0; }
+
+/* ─── Divider ────────────────────────────────────── */
+.divider {
+  width: 100%;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ─── Buttons ────────────────────────────────────── */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.75rem;
+  background: var(--green);
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: var(--radius-sm);
+  transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
+}
+.btn-primary:hover {
+  background: var(--green-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(106,158,119,0.25);
+}
+.btn-primary:active { transform: translateY(0); }
+
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.75rem;
+  background: transparent;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  font-weight: 500;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  transition: border-color var(--transition), background var(--transition), transform var(--transition);
+}
+.btn-outline:hover {
+  border-color: var(--green);
+  background: var(--green-light);
+  transform: translateY(-1px);
+}
+
+/* ─── Label tag ──────────────────────────────────── */
+.label {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 1.25rem;
+}
+
+/* ─── Scroll fade-in animation ───────────────────── */
+.fade-in {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.65s var(--ease), transform 0.65s var(--ease);
+}
+.fade-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+}

@@ -1,0 +1,101 @@
+.process { background: var(--bg); }
+
+.process__header {
+  margin-bottom: 5rem;
+}
+.process__header h2 { margin-top: 0.5rem; }
+
+.process__steps {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr;
+  align-items: start;
+  gap: 0;
+}
+
+.process__step {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.process__step-num {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+  margin-bottom: 0.5rem;
+}
+.process__step-icon {
+  color: var(--green);
+  width: 42px;
+  height: 42px;
+  background: var(--green-light);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.6rem;
+}
+.process__step h3 {
+  color: var(--text-primary);
+  font-size: 1rem;
+}
+.process__step p {
+  font-size: 0.875rem;
+  line-height: 1.7;
+  max-width: 200px;
+}
+
+/* Connector between steps */
+.process__connector {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 0 1.5rem;
+  margin-top: 58px; /* aligns with icon row */
+}
+.process__connector-line {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+  position: relative;
+}
+.process__connector-line::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: -0.5px;
+  height: 1px;
+  width: 0;
+  background: var(--green);
+  transition: width 1.4s var(--ease);
+}
+.process__connector.visible .process__connector-line::after {
+  width: 100%;
+}
+
+@media (max-width: 900px) {
+  .process__steps {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  .process__connector {
+    display: block;
+    margin: 0;
+    padding: 1rem 0 1rem 20px;
+  }
+  .process__connector-line {
+    width: 1px;
+    height: 32px;
+    background: var(--border);
+  }
+  .process__connector-line::after {
+    width: 1px !important;
+    height: 0;
+    top: 0;
+    left: -0.5px;
+    transition: height 1.4s var(--ease);
+  }
+  .process__connector.visible .process__connector-line::after { height: 100%; }
+  .process__step p { max-width: 100%; }
+}
