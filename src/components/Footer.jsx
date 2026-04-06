@@ -39,8 +39,12 @@ export default function Footer() {
           <div className="footer__contact">
             <span className="footer__nav-heading">Contact</span>
             <a href="mailto:hello@ewheels.io">hello@ewheels.io</a>
-            <a href="tel:+447700000000">+44 7700 000 000</a>
-            <p className="footer__address">12 Volt Lane, London, EC1A 1AA</p>
+            <a href="tel:+919947793000">+91 9947793000</a>
+            <a href="tel:+919947794000">+91 9947794000</a>
+            <p className="footer__address">
+              1/657, NH-66, Behind Mozart Furniture<br />
+              Chenakkal, Randathani, Kerala 676510
+            </p>
           </div>
         </div>
 
