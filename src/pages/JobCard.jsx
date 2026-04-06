@@ -5,6 +5,7 @@ import { Loader2, AlertCircle } from 'lucide-react'
 import Timeline from '../components/JobCard/Timeline'
 import ServiceDetails from '../components/JobCard/ServiceDetails'
 import StepperProgress from '../components/JobCard/StepperProgress'
+import PhotoGallery from '../components/JobCard/PhotoGallery'
 import { Card, CardHeader, CardContent, CardTitle, CardDescription } from "@/components/ui/card"
 
 const getComplaintsArray = (complaintData) => {
@@ -33,7 +34,8 @@ export default function JobCard() {
     vehicle: [],
     battery: [],
     charger: [],
-    updates: []
+    updates: [],
+    photos: []
   })
 
   useEffect(() => {
@@ -58,20 +60,48 @@ export default function JobCard() {
           { data: vehicleData },
           { data: batteryData },
           { data: chargerData },
-          { data: updatesData }
+          { data: updatesData },
+          { data: attachmentsData }
         ] = await Promise.all([
           supabase.from('vehicle_cases').select('*').eq('service_ticket_id', ticket.id),
           supabase.from('battery_cases').select(`*, battery_records(serial_number)`).eq('service_ticket_id', ticket.id),
           supabase.from('charger_cases').select('*').eq('service_ticket_id', ticket.id),
-          supabase.from('ticket_status_updates').select('*').eq('ticket_id', ticket.id).order('created_at', { ascending: false })
+          supabase.from('ticket_status_updates').select('*').eq('ticket_id', ticket.id).order('created_at', { ascending: false }),
+          supabase.from('ticket_attachments').select('*').eq('ticket_id', ticket.id).eq('attachment_type', 'photo')
         ])
+
+        // Resolve image URLs — try public URL first, fall back to signed URL
+        const photos = await Promise.all(
+          (attachmentsData || []).map(async (attachment) => {
+            try {
+              const { data: pubData } = supabase.storage
+                .from('media-photos')
+                .getPublicUrl(attachment.storage_path)
+
+              // Test if the public URL is accessible
+              const testRes = await fetch(pubData.publicUrl, { method: 'HEAD' })
+              if (testRes.ok) {
+                return { ...attachment, url: pubData.publicUrl }
+              }
+
+              // Fallback: signed URL (1 hour)
+              const { data: signedData } = await supabase.storage
+                .from('media-photos')
+                .createSignedUrl(attachment.storage_path, 3600)
+              return { ...attachment, url: signedData?.signedUrl }
+            } catch {
+              return null
+            }
+          })
+        )
 
         setData({
           ticket,
           vehicle: vehicleData || [],
           battery: batteryData || [],
           charger: chargerData || [],
-          updates: updatesData || []
+          updates: updatesData || [],
+          photos: photos.filter(Boolean)
         })
 
       } catch (err) {
@@ -109,7 +139,7 @@ export default function JobCard() {
     )
   }
 
-  const { ticket, vehicle, battery, charger, updates } = data
+  const { ticket, vehicle, battery, charger, updates, photos } = data
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-emerald-50 via-white to-white text-foreground py-10 px-4 md:px-8 flex justify-center">
@@ -173,6 +203,9 @@ export default function JobCard() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Photo Gallery */}
+        <PhotoGallery photos={photos} />
 
         {/* Details and Timeline */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
