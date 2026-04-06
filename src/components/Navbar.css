@@ -23,18 +23,8 @@
 }
 
 .navbar__logo {
-  font-size: 1.15rem;
-  font-weight: 600;
-  letter-spacing: -0.03em;
-  color: var(--text-primary);
   display: flex;
   align-items: center;
-  gap: 1px;
-}
-.navbar__logo-mark {
-  color: var(--green);
-  font-size: 1.3rem;
-  font-weight: 700;
 }
 
 .navbar__links {

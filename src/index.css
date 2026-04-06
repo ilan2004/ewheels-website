@@ -159,6 +159,14 @@ section { padding: 7rem 0; }
   margin-bottom: 1.25rem;
 }
 
+/* ─── Logo ───────────────────────────────────────── */
+.navbar__logo-img {
+  height: 32px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+}
+
 /* ─── Scroll fade-in animation ───────────────────── */
 .fade-in {
   opacity: 0;

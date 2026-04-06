@@ -22,7 +22,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="footer__brand">
             <a href="#" className="navbar__logo footer__logo">
-              <span className="navbar__logo-mark">e</span>wheels
+              <img src="/splash.png" alt="Ewheels Logo" className="navbar__logo-img" />
             </a>
             <p>Specialist electric vehicle servicing<br />you can actually trust.</p>
           </div>

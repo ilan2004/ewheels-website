@@ -16,7 +16,7 @@ export default function Navbar() {
       <div className="container navbar__inner">
         {/* Logo */}
         <a href="#" className="navbar__logo">
-          <span className="navbar__logo-mark">e</span>wheels
+          <img src="/splash.png" alt="Ewheels Logo" className="navbar__logo-img" />
         </a>
 
         {/* Desktop nav */}
